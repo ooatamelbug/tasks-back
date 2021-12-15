@@ -1,4 +1,5 @@
 import express, { Application } from 'express';
+import Database from './database/config';
 
 
 class ApplicationExpress {
@@ -6,11 +7,17 @@ class ApplicationExpress {
 
     constructor(){
         this.app = express();
+        this.connectDB();
+        this.route();
     }
 
     public configration () {
         this.app.use(express.json());
         this.app.set("port", 3000);
+    }
+
+    public async connectDB () {
+       await new Database();
     }
 
     public route () {
