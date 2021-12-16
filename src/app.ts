@@ -1,19 +1,32 @@
-import express, { Application } from 'express';
+import express, { Application, Router } from 'express';
+import RouterApp from './api/router';
 import Database from './database/config';
-
+import cors from "cors";
+import Logger from './logger/log';
 
 class ApplicationExpress {
     private app: Application;
+    private logger: Logger; 
+    private port: number;
 
     constructor(){
         this.app = express();
         this.connectDB();
+        this.corsConfigration();
+        this.configration();
+        new RouterApp(this.app);
         this.route();
+        this.logger = new Logger();
     }
 
     public configration () {
         this.app.use(express.json());
-        this.app.set("port", 3000);
+        this.app.use(express.urlencoded({ extended: false }));
+        this.port = 3000;
+    }
+
+    public corsConfigration () {
+        this.app.use(cors());
     }
 
     public async connectDB () {
@@ -21,11 +34,7 @@ class ApplicationExpress {
     }
 
     public route () {
-        this.app.use('/', (req, res, next ) => {
-           return res.status(200).json({
-               name: "name"
-           });
-        });
+        
     }
 
     public getApp () {
@@ -33,8 +42,8 @@ class ApplicationExpress {
     }
 
     public listen () {
-        this.app.listen(this.app.get("port"), () => {
-            console.log("listen");
+        this.app.listen(this.port, () => {
+            this.logger.getlog().info("listen");
         })
     }
     

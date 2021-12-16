@@ -1,8 +1,11 @@
 import { createConnection } from "typeorm";
+import Logger from '../logger/log';
 
 class Database {
   private connectdb;
+  private logger: Logger; 
   constructor() {
+    this.logger = new Logger();
     this.connect();
   }
 
@@ -17,11 +20,11 @@ class Database {
         synchronize: true,
         database: "tasks",
         entities: ["src/api/entities/**/*.ts"],
-        logging: true,
+        logging: false,
       });
-      console.log("connect");
+      this.logger.getlog().info("connect");
     } catch (err) {
-      console.log(err);
+      this.logger.getlog().error(err);
     }
   }
 }

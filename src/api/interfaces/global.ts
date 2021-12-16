@@ -1,7 +1,7 @@
 export interface ResponseDataService {
     data?: [any];
     success?: boolean;
-    messages?: string;
+    message?: string;
     token?:  string
     userData?: {
         firstname: string;
