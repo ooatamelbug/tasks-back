@@ -16,7 +16,7 @@ class Database {
         password: "postgres",
         synchronize: true,
         database: "tasks",
-        entities: ["build/database/entities/**/*.js"],
+        entities: ["src/api/entities/**/*.ts"],
         logging: true,
       });
       console.log("connect");
