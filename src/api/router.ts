@@ -14,7 +14,7 @@ class RouterApp {
                 name: "name"
             });
          });
-        app.use('/api/users', this.userRouter.routes);
+        app.use('/api/users', this.userRouter.router);
     }
 }
 
