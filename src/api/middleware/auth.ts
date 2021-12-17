@@ -1,0 +1,45 @@
+import { paylaodInterface } from './../interfaces/user';
+import { ResponseDataService, RequestUser } from "./../interfaces/global";
+import { NextFunction, Response, Request } from "express";
+import { verify, JwtPayload } from "jsonwebtoken";
+import Logger from "../../logger/log";
+
+const Auth = async (req: RequestUser, res: Response, next: NextFunction) => {
+  try {
+    let response =  <ResponseDataService>{};
+    const tokenInHeader = <string>req.headers["authorization"];
+    if (!tokenInHeader != undefined) {
+      response = {
+        message: "not authorization",
+        success: false,
+      };
+      return res.status(401).json(response);
+    } else {
+      const verifyToken: string | JwtPayload = await verify(
+        tokenInHeader,
+        "entertoAPP"
+      );
+      if (!verifyToken) {
+        response = {
+            message: "not valid authorization",
+            success: false,
+          };
+          return res.status(401).json(response);
+      } else {
+          const { id } = <paylaodInterface>verifyToken;
+          req.user = id;
+          next();
+      }
+    }
+  } catch (error) {
+    const log = new Logger();
+    log.getlog().error(error);
+    const response: ResponseDataService = {
+      message: "error ",
+      success: false,
+    };
+    return res.status(500).json(response);
+  }
+};
+
+export default Auth;

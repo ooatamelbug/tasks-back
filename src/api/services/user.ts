@@ -1,9 +1,11 @@
+import { response } from "express";
 import { ResponseDataService, ReturnDataService } from "./../interfaces/global";
 import UserEntity from "../entities/user";
 import UserRepo from "../repository/user";
-import { hash } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import { omit } from "lodash";
 import Logger from "../../logger/log";
+import { sign } from "jsonwebtoken";
 
 class UserService implements UserRepo {
   public log: Logger;
@@ -24,28 +26,26 @@ class UserService implements UserRepo {
       // extract some variable from of body params
       let { username, password, firstname, lastname } = body;
       // check if the any user have same this username
-      const getUser = await UserEntity.findOne({ 
+      const getUser = await UserEntity.findOne({
         where: {
-          username
-        }   
+          username,
+        },
       });
       // check if any user
       if (getUser) {
         // change the statusCode and message
         statusCode = 400;
+        response.success = false;
         response.message = "this username is used!";
       } else {
-        // hash the password
-        const hashPassword = await hash(password, 12);
-
         // create new user
         const newUser = UserEntity.create({
           username,
-          password: hashPassword,
+          password,
           firstname,
           lastname,
         });
-        
+
         await newUser.save();
         // change the statusCode and message
         statusCode = 201;
@@ -62,7 +62,63 @@ class UserService implements UserRepo {
     return { statusCode, response };
   }
 
-  async login(body) {}
+  async login(body) {
+    // init the statusCode and response object
+    let statusCode = 200;
+    let response = <ResponseDataService>{};
+    try {
+      // extract some variable from of body params
+      let { username, password } = body;
+      // check if the any user have same this username
+      const getUserByUsername: UserEntity | undefined =
+        await UserEntity.findOne({
+          where: {
+            username,
+          },
+        });
+      // check if any user
+      if (!getUserByUsername) {
+        // retrun error because the username is wrong
+        statusCode = 404;
+        response.success = false;
+        response.message =
+          "this username not founded please check it again or make new account!";
+      } else {
+        // compare the request provide password and the password in user data
+        const getUserPassword = await compare(
+          password,
+          getUserByUsername.password
+        );
+        // check if is two password is same after hashed
+        if (!getUserPassword) {
+          // retrun error because the passsword is wrong
+          statusCode = 404;
+          response.success = false;
+          response.message = "invalid password for this user!";
+        } else {
+          // create token from data user
+          const token = await sign(
+            { username: getUserByUsername.username, id: getUserByUsername.id },
+            "entertoAPP",
+            {
+              expiresIn: "2h",
+            }
+          );
+          // change the statusCode and message
+          statusCode = 200;
+          response.token = token;
+          response.userData = omit(getUserByUsername, "password");
+          response.success = true;
+        }
+      }
+    } catch (error) {
+      // change the statusCode and message
+      this.log.getlog().error(error);
+      statusCode = 500;
+      response.message = "error in server!";
+    }
+    return { statusCode, response };
+  }
 }
 
 export default UserService;

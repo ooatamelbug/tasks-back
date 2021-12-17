@@ -19,7 +19,11 @@ class UserRouter {
       [...validation.rigesterValidation, validate],
       this.userController.rigester
     );
-
+    this.router.post(
+        "/login",
+        [...validation.loginValidation , validate],
+        this.userController.login
+    );
   }
 }
 

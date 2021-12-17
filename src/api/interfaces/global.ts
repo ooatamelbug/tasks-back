@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { ValidationError } from "express-validator";
 
 export interface ResponseDataService {
@@ -16,4 +17,8 @@ export interface ResponseDataService {
 export interface ReturnDataService {
     statusCode: number;
     response: ResponseDataService;
+}
+
+export interface RequestUser extends Request {
+    user?: string
 }

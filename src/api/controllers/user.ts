@@ -13,8 +13,17 @@ class UserController {
     res: Response,
     next: NextFunction
   ): Promise<Response<any, Record<string, any>>> {
-    console.log(typeof "s");
     const result = await new UserService().rigesterUser(req.body);
+    return res.status(result.statusCode).json(result.response);
+  }
+
+  public async login (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<any, Record<string, any>>> {
+    const result = await new UserService().login(req.body);
+    res.setHeader("token", result.response.token || "");
     return res.status(result.statusCode).json(result.response);
   }
 }
