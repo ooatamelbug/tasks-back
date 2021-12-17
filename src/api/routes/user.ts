@@ -6,6 +6,7 @@ import validation from "../validation/user";
 class UserRouter {
   public router: Router;
   private userController: UserController;
+
   constructor() {
     this.router = Router();
     this.userController = new UserController();
@@ -15,7 +16,7 @@ class UserRouter {
   public routes() {
     this.router.post(
       "/create",
-      [...validation.rigesterValidation, validate()],
+      [...validation.rigesterValidation, validate],
       this.userController.rigester
     );
 

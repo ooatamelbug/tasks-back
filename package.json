@@ -33,6 +33,7 @@
     "pg": "^8.7.1",
     "pino": "^7.5.1",
     "pino-pretty": "^7.3.0",
+    "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.41"
   }
 }

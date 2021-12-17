@@ -3,29 +3,27 @@ import { validationResult, Result, ValidationError } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import Logger from "../../logger/log";
 
-const validate = () => {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const errors: Result<ValidationError> = validationResult(req);
-      if (!errors.isEmpty()) {
-        const response: ResponseDataService = {
-          message: "error validate",
-          errors: errors.array(),
-          success: false,
-        };
-        res.status(400).json(response);
-      }
-      next();
-    } catch (error) {
-      const log = new Logger();
-      log.getlog().error(error);
+const validate = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const errors: Result<ValidationError> = validationResult(req);
+    if (!errors.isEmpty()) {
       const response: ResponseDataService = {
-        message: "error ",
+        message: "error validate",
+        errors: errors.array(),
         success: false,
       };
-      res.status(500).json(response);
+      return res.status(400).json(response);
     }
-  };
+    next();
+  } catch (error) {
+    const log = new Logger();
+    log.getlog().error(error);
+    const response: ResponseDataService = {
+      message: "error ",
+      success: false,
+    };
+    return res.status(500).json(response);
+  }
 };
 
 export default validate;

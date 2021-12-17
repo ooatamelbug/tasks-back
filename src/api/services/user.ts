@@ -1,10 +1,16 @@
 import { ResponseDataService, ReturnDataService } from "./../interfaces/global";
-import User from "../entities/user";
+import UserEntity from "../entities/user";
 import UserRepo from "../repository/user";
 import { hash } from "bcryptjs";
 import { omit } from "lodash";
+import Logger from "../../logger/log";
 
 class UserService implements UserRepo {
+  public log: Logger;
+
+  constructor() {
+    this.log = new Logger();
+  }
   /**
    * this function for rigester new user to app
    * @param body
@@ -18,7 +24,11 @@ class UserService implements UserRepo {
       // extract some variable from of body params
       let { username, password, firstname, lastname } = body;
       // check if the any user have same this username
-      const getUser = await User.findOne({ username });
+      const getUser = await UserEntity.findOne({ 
+        where: {
+          username
+        }   
+      });
       // check if any user
       if (getUser) {
         // change the statusCode and message
@@ -29,13 +39,13 @@ class UserService implements UserRepo {
         const hashPassword = await hash(password, 12);
 
         // create new user
-        const newUser = User.create({
+        const newUser = UserEntity.create({
           username,
           password: hashPassword,
           firstname,
           lastname,
         });
-
+        
         await newUser.save();
         // change the statusCode and message
         statusCode = 201;
@@ -44,12 +54,14 @@ class UserService implements UserRepo {
       }
     } catch (error) {
       // change the statusCode and message
+      this.log.getlog().error(error);
       statusCode = 500;
       response.message = "error in server!";
     }
     // return status Code and  response
     return { statusCode, response };
   }
+
   async login(body) {}
 }
 

@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import express, { Application, Router } from 'express';
 import RouterApp from './api/router';
 import Database from './database/config';

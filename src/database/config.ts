@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { createConnection } from "typeorm";
 import Logger from '../logger/log';
 
@@ -13,13 +14,15 @@ class Database {
     try {
       this.connectdb = await createConnection({
         type: "postgres",
-        name: "tasks",
+        name: "default",
         port: 5432,
+        host: "localhost",
         username: "postgres",
         password: "postgres",
         synchronize: true,
         database: "tasks",
         entities: ["src/api/entities/**/*.ts"],
+        migrations: ["src/api/database/migrations/**/*.ts"],
         logging: false,
       });
       this.logger.getlog().info("connect");
