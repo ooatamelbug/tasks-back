@@ -1,5 +1,4 @@
-import { response } from "express";
-import { ResponseDataService, ReturnDataService } from "./../interfaces/global";
+import { ResponseDataService } from "./../interfaces/global";
 import UserEntity from "../entities/user";
 import UserRepo from "../repository/user";
 import { compare, hash } from "bcryptjs";

@@ -1,0 +1,16 @@
+import { body, param, ValidationChain } from "express-validator";
+
+const taskValidationChain = <ValidationChain[]>[
+  body("title")
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage("not allow to Empty!")
+    .isAlphanumeric()
+    .withMessage("should contain some char!"),
+  body("desc").trim().escape(),
+];
+
+export default {
+  taskValidation: taskValidationChain,
+};
