@@ -5,9 +5,11 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert
+  BeforeInsert,
+  OneToMany
 } from "typeorm";
 import {  genSalt, hash } from "bcryptjs";
+import TasksEntity from "./task";
 
 
 @Entity("users")
@@ -26,6 +28,12 @@ class UserEntity extends BaseEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(
+    () => TasksEntity,
+    tasks => tasks.user
+  )
+  tasks: TasksEntity[]
 
   @CreateDateColumn()
   created_at: Date;
