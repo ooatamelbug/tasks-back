@@ -1,5 +1,6 @@
 import { Router } from "express";
 import TaskController from "../controllers/task";
+import Auth from "../middleware/auth";
 import validate from "../middleware/validate";
 import validation from "../validation/task";
 
@@ -15,8 +16,13 @@ class TaskRouter {
   public routes() {
     this.router.post(
         "/create",
-        [ ...validation.taskValidation, validate],
+        [ Auth, ...validation.taskValidation, validate],
         this.taskController.create
+    );
+    this.router.get(
+        "/all",
+        [ Auth],
+        this.taskController.tasks
     );
   }
 }

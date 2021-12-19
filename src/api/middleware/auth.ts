@@ -5,10 +5,11 @@ import { verify, JwtPayload } from "jsonwebtoken";
 import Logger from "../../logger/log";
 
 const Auth = async (req: RequestUser, res: Response, next: NextFunction) => {
+  const log = new Logger();
   try {
     let response =  <ResponseDataService>{};
     const tokenInHeader = <string>req.headers["authorization"];
-    if (!tokenInHeader != undefined) {
+    if (!tokenInHeader) {
       response = {
         message: "not authorization",
         success: false,
@@ -19,7 +20,8 @@ const Auth = async (req: RequestUser, res: Response, next: NextFunction) => {
         tokenInHeader,
         "entertoAPP"
       );
-      if (!verifyToken) {
+    log.getlog().info(verifyToken);
+    if (!verifyToken) {
         response = {
             message: "not valid authorization",
             success: false,
@@ -32,10 +34,8 @@ const Auth = async (req: RequestUser, res: Response, next: NextFunction) => {
       }
     }
   } catch (error) {
-    const log = new Logger();
-    log.getlog().error(error);
     const response: ResponseDataService = {
-      message: "error ",
+      message: "error "+ error.message,
       success: false,
     };
     return res.status(500).json(response);

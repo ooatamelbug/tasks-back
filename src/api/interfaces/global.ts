@@ -2,7 +2,7 @@ import { Request } from "express";
 import { ValidationError } from "express-validator";
 
 export interface ResponseDataService {
-    data?: [any];
+    data?: any[] | [any];
     success?: boolean;
     message?: string;
     errors?: ValidationError[]; 

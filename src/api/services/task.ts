@@ -2,6 +2,7 @@ import { ResponseDataService } from "./../interfaces/global";
 import Logger from "../../logger/log";
 import TaskRepo from "../repository/task";
 import TasksEntity from "../entities/task";
+import UserEntity from "../entities/user";
 
 class TaskService implements TaskRepo {
   public log: Logger;
@@ -12,7 +13,7 @@ class TaskService implements TaskRepo {
 
   async createTask(uerId, body) {
     // init the statusCode and response object
-    let statusCode = 200;
+    let statusCode: number = 200;
     let response = <ResponseDataService>{};
     try {
       // extract some variable from of body params
@@ -28,6 +29,29 @@ class TaskService implements TaskRepo {
       // change the statusCode and message
       statusCode = 201;
       response.data = [newTask];
+      response.success = true;
+    } catch (error) {
+      // change the statusCode and message
+      this.log.getlog().error(error);
+      statusCode = 500;
+      response.message = "error in server!";
+    }
+    return { statusCode, response };
+  }
+  
+  async getTasks(userId) {
+    // init the statusCode and response object
+    let statusCode: number = 200;
+    let response = <ResponseDataService>{};
+    try {
+      const tasks = await TasksEntity.find({
+        where: {
+          user :userId
+        },
+      });
+      this.log.getlog().info(tasks);
+      
+      response.data = tasks;
       response.success = true;
     } catch (error) {
       // change the statusCode and message

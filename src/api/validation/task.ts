@@ -11,6 +11,17 @@ const taskValidationChain = <ValidationChain[]>[
   body("desc").trim().escape(),
 ];
 
+const updateTaskValidationChain = <ValidationChain[]>[
+  param("id")
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage("not allow to Empty!")
+    .isAlphanumeric()
+    .withMessage("should contain some char!"),
+];
+
 export default {
   taskValidation: taskValidationChain,
+  updateTaskValidation: updateTaskValidationChain,
 };

@@ -15,6 +15,15 @@ class TaskController {
     const result = await new TaskService().createTask(req.user, req.body);
     return res.status(result.statusCode).json(result.response);
   }
+
+  public async tasks(
+    req: RequestUser,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<any, Record<string, any>>> {
+    const result = await new TaskService().getTasks(req.user);
+    return res.status(result.statusCode).json(result.response);
+  }
 }
 
 export default TaskController;
