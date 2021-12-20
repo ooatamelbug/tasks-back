@@ -15,14 +15,30 @@ class TaskRouter {
 
   public routes() {
     this.router.post(
-        "/create",
-        [ Auth, ...validation.taskValidation, validate],
-        this.taskController.create
+      "/create",
+      [Auth, ...validation.taskValidation, validate],
+      this.taskController.create
     );
-    this.router.get(
-        "/all",
-        [ Auth],
-        this.taskController.tasks
+    this.router.get("/all", [Auth], this.taskController.tasks);
+
+    this.router.put(
+      "/edit/:id",
+      [
+        Auth,
+        ...validation.updateTaskIdValidation,
+        ...validation.updateTaskValidation,
+        validate,
+      ],
+      this.taskController.edit
+    );
+    this.router.delete(
+      "/delete",
+      [
+        Auth,
+        ...validation.deleteTaskValidation,
+        validate,
+      ],
+      this.taskController.delete
     );
   }
 }
