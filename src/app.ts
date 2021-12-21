@@ -4,19 +4,22 @@ import RouterApp from './api/router';
 import Database from './database/config';
 import cors from "cors";
 import Logger from './logger/log';
+import { ApolloServer } from "apollo-server-express";
 
 class ApplicationExpress {
     private app: Application;
     private logger: Logger; 
     private port: number;
+    private server: ApolloServer;
+
 
     constructor(){
         this.app = express();
+        this.apolloServer();
         this.connectDB();
         this.corsConfigration();
         this.configration();
         new RouterApp(this.app);
-        this.route();
         this.logger = new Logger();
     }
 
@@ -34,8 +37,10 @@ class ApplicationExpress {
        await new Database();
     }
 
-    public route () {
-        
+    public apolloServer () {
+        const path: string = 'graphql';
+        this.server = new ApolloServer({});
+        this.server.applyMiddleware({ app: this.app, path });
     }
 
     public getApp () {
