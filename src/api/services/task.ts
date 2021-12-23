@@ -101,15 +101,15 @@ class TaskService implements TaskRepo {
     // init the statusCode and response object
     let statusCode: number = 200;
     let response = <ResponseDataService>{};
-    return await new Promise<ReturnDataService>( async ( resolve, reject) => {
+    return await new Promise<ReturnDataService>(async (resolve, reject) => {
       try {
         const { tasksId } = body;
-        tasksId.forEach( async task => {
+        tasksId.forEach(async (task) => {
           const taskData = await TasksEntity.findOne({
             where: {
               id: task.id,
-              user: userId
-            }
+              user: userId,
+            },
           });
           if (!taskData) {
             statusCode = 404;
@@ -117,12 +117,12 @@ class TaskService implements TaskRepo {
             resolve({ statusCode, response });
           }
         });
-        tasksId.forEach( async eachTask => {
+        tasksId.forEach(async (eachTask) => {
           const taskData = await TasksEntity.findOne({
             where: {
               id: eachTask.id,
-              user: userId
-            }
+              user: userId,
+            },
           });
           await taskData?.remove();
         });
@@ -135,7 +135,7 @@ class TaskService implements TaskRepo {
         statusCode = 500;
         response.message = "error in server!";
         resolve({ statusCode, response });
-      }  
+      }
     });
   }
 }
