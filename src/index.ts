@@ -1,9 +1,13 @@
 // import ApplicationExpress class
-import ApplicationExpress from './app';
+import ApplicationExpress from "./app";
 
-// create new instance from ApplicationExpress
-const server = new ApplicationExpress();
+async function serverGo() {
+  // create new instance from ApplicationExpress
+  const server = new ApplicationExpress();
 
-
-// fire listen
-server.listen();
+  //
+  await server.apolloServer();
+  // fire listen
+  server.listen();
+}
+serverGo();

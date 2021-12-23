@@ -1,10 +1,11 @@
 import "reflect-metadata";
-import express, { Application, Router } from 'express';
+import express, { Application, Request, Response } from 'express';
 import RouterApp from './api/router';
 import Database from './database/config';
 import cors from "cors";
 import Logger from './logger/log';
 import { ApolloServer } from "apollo-server-express";
+import { buildSchema } from 'type-graphql';
 
 class ApplicationExpress {
     private app: Application;
@@ -15,7 +16,6 @@ class ApplicationExpress {
 
     constructor(){
         this.app = express();
-        this.apolloServer();
         this.connectDB();
         this.corsConfigration();
         this.configration();
@@ -37,10 +37,20 @@ class ApplicationExpress {
        await new Database();
     }
 
-    public apolloServer () {
-        const path: string = 'graphql';
-        this.server = new ApolloServer({});
-        this.server.applyMiddleware({ app: this.app, path });
+    public async apolloServer () {
+        this.server = new ApolloServer({
+            introspection: true,
+            schema: await buildSchema({
+                resolvers: [__dirname + "/graphql/resolvers/*.ts"],
+                validate: false
+            }),
+            context: ({ req, res }) => ({
+                req,
+                res              
+            })
+        });
+        await this.server.start();
+        this.server.applyMiddleware({ app: this.app, cors: true });
     }
 
     public getApp () {

@@ -7,7 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
-  OneToMany
+  OneToMany,
+  RelationId
 } from "typeorm";
 import {  genSalt, hash } from "bcryptjs";
 import TasksEntity from "./task";
@@ -35,12 +36,14 @@ class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
-  @Field((_type) => [TasksEntity])
+  @Field(() => [TasksEntity])
   @OneToMany(
     () => TasksEntity,
     tasks => tasks.user
   )
   tasks: TasksEntity[]
+  @RelationId((user: UserEntity) => user.tasks)
+  userCourseIds: string;
 
   @Field()
   @CreateDateColumn()
@@ -51,7 +54,6 @@ class UserEntity extends BaseEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Field()
   public getFullname () {
     return `${this.firstname} ${this.lastname}`;
   }

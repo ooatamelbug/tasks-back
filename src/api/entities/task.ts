@@ -32,14 +32,11 @@ class TasksEntity extends BaseEntity {
   @Column()
   status: boolean
 
-  @Field((_type) => UserEntity)
+  @Field(() => UserEntity)
   @ManyToOne(
       () => UserEntity,
-      user => user.getFullname
+      user => user.tasks
   )
-  @JoinTable({
-    name: "user_id"
-  })
   user: UserEntity
 
   @Field()
