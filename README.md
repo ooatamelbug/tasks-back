@@ -2,7 +2,7 @@
 tasks backend node js
 
 # this code for 
-for make tasks and make sure you finised from it status 
+for make tasks and make sure you finished from it status 
 and you can make all operatior on it delete and update it 
 
 
