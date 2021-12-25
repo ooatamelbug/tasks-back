@@ -5,6 +5,7 @@ import {
   ResponseDataService,
   ReturnDataService,
 } from "../../api/interfaces/global";
+import { rigesterUser, createTaskInput, updateTaskInput } from "../InputType";
 
 @Resolver()
 export class taskResolver {
@@ -24,9 +25,9 @@ export class taskResolver {
   @Query(() => TasksEntity, { nullable: true })
   async getOnTask(
     @Arg("id") id: string,
+    @Arg("userId") userId: string,
     @Ctx() { req, res }: ContextEntity
   ): Promise<TasksEntity | undefined> {
-    const { userId } = req.body;
     return await TasksEntity.findOne({
       where: {
         user: userId,
@@ -37,27 +38,25 @@ export class taskResolver {
 
   @Mutation(() => TasksEntity, { nullable: true })
   async createTask(
+    @Arg("data") { userId, title, desc }: createTaskInput,
     @Ctx() { req, res }: ContextEntity
-  ): Promise<TasksEntity | ReturnDataService> {
-    let statusCode: number = 200;
-    const { userId, title, status, desc } = req.body;
-    const newTask = TasksEntity.create({
-      title,
-      desc,
-      user: userId,
-    });
-    await newTask.save();
+  ): Promise<TasksEntity> {
+    const newTask = await TasksEntity.create({
+        title,
+        desc,
+        user: userId
+    }).save();
+
     return newTask;
   }
 
   @Mutation(() => TasksEntity, { nullable: true })
   async updateTask(
-    @Arg("id") id: string,
+    @Arg("data") { userId, id, title, status, desc  }: updateTaskInput,
     @Ctx() { req, res }: ContextEntity
   ): Promise<TasksEntity | ReturnDataService> {
     let statusCode: number = 200;
     let response = <ResponseDataService>{};
-    const { userId, title, status, desc } = req.body;
     const task = await TasksEntity.findOne({
       where: {
         user: userId,
@@ -100,7 +99,7 @@ export class taskResolver {
 
       return { response, statusCode };
     } else {
-      await task?.remove();
+      await task!.remove();
       return "removed";
     }
   }

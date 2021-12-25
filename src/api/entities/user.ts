@@ -33,7 +33,7 @@ class UserEntity extends BaseEntity {
   lastname: string;
 
   @Field()
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Field(() => [TasksEntity])

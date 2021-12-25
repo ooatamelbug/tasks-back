@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType, ID } from "type-graphql";
 import {
   Entity,
   Column,
@@ -14,7 +14,7 @@ import UserEntity from "./user";
 @ObjectType()
 @Entity("tasks")
 class TasksEntity extends BaseEntity {
-  @Field((_type) => String)
+  @Field(() => ID)
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
@@ -37,7 +37,7 @@ class TasksEntity extends BaseEntity {
       () => UserEntity,
       user => user.tasks
   )
-  user: UserEntity
+  user: UserEntity | string
 
   @Field()
   @CreateDateColumn()
